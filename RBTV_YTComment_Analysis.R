@@ -9,12 +9,11 @@
 
   
   # Get and Read Google Developer Key / YouTube V3 API Key and Authentification
-  sAPIpath    <- "C:/Users/Yannic/OneDrive/Documents/11_Fortbildung/RBTV_YTComment_Analysis/RBTV_YTComment_Analysis/API_KEY_YouTubeV3.txt"
+  sAPIpath    <- "C:/Users/Yannic/OneDrive/Documents/11_Fortbildung/RBTV_YTComment_Analysis/API_KEY_YouTubeV3.txt"
   arrAPItable <- read.table(sAPIpath, header = FALSE)
   sAPIkey     <- arrAPItable[1,1]
   #print(APIkey)  # Debugging
   arrKey      <- Authenticate("youtube",sAPIkey)
-  #testetstest
   
   #Collect Data using YouTube videos
   ytVideos <- c()
