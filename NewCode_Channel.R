@@ -11,14 +11,14 @@ library(reshape2)
   # Get and Read Google Developer Key / YouTube V3 API Key and Authentification
   sAPIpath    <- "C:/Users/Yannic/OneDrive/Documents/11_Fortbildung/RBTV_YTComment_Analysis/API_KEY_YouTubeV3.txt"
   arrAPItable <- read.table(sAPIpath, header = FALSE)
-  sAPIkey     <- arrAPItable[1,1]
+  sAPIKey     <- arrAPItable[1,1]
   #print(APIkey)  # Debugging
   arrKey      <- Authenticate("youtube",sAPIkey)
   
   #IDs
-  videoID     <- "3gJngOCyrZg" # Debugging
-  playlistID  <- "PLsD6gQXey8N1pHbp1MVTmnmCx5vConHKl" # Debugging
-  channelID   <- "UCkfDws3roWo1GaA3pZUzfIQ" # Debugging RBTV LP&S
+  sVideoID     <- "3gJngOCyrZg" # Debugging
+  sPlaylistID  <- "PLsD6gQXey8N1pHbp1MVTmnmCx5vConHKl" # Debugging
+  sChannelID   <- "UCkfDws3roWo1GaA3pZUzfIQ" # Debugging RBTV LP&S
   
   
   # single video statistics/ information (total likes, comments, etc.)
@@ -42,7 +42,7 @@ library(reshape2)
     return(data.frame(result$items$contentDetails))
   }
   # Test
-  playlist_channel <- get_playlist_canal(playlistID, sAPIkey)
+  test_playlist_channel <- get_playlist_canal(playlistID, sAPIkey)
 
   
   # gets a single row of basic channel information (name, views, subscriber, etc.)
@@ -55,7 +55,7 @@ library(reshape2)
     
   }
   # Test
-  stats_channel <- getstats_canal(channelID, sAPIkey)
+  test_stats_channel <- getstats_canal(channelID, sAPIkey)
   
   getsections_canal<-function(channel_id,API_key){
     
@@ -66,27 +66,36 @@ library(reshape2)
   
   }
   # Test
-  sections_channel <- getsections_canal(channelID, sAPIkey)
+  test_sections_channel <- getsections_canal(channelID, sAPIkey)
+  
+  
   
   # manually
-  url=paste0('https://youtube.googleapis.com/youtube/v3/channelSections?part=snippet%2CcontentDetails&channelId=',channelID,'&key=',sAPIkey)
+  channelID <- "UCmY6t25uVbXIDTizjfLBI4Q" # Bigpuffer
+  url <- paste0('https://youtube.googleapis.com/youtube/v3/channelSections?part=snippet%2CcontentDetails&channelId=',channelID,'&key=',sAPIkey)
+  url <- paste0('https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=',channelID,'&key=',sAPIkey,'&maxResults=50')
   result <- fromJSON(txt=url)
-  #y https://youtube.googleapis.com/youtube/v3/channelSections?part=snippet%2CcontentDetails&channelId=UCkfDws3roWo1GaA3pZUzfIQ&key=AIzaSyB6CH658uQulai9xvTNu5sf7hsQwlecO2s
-  #n https://www.googleapis.com/youtube/v3/channelSections?part=snippet%2CcontentDetails&channelid=UCkfDws3roWo1GaA3pZUzfIQ&key=AIzaSyB6CH658uQulai9xvTNu5sf7hsQwlecO2s
+  result2 <- data.frame(playlist_names = result[["items"]][["snippet"]][["title"]], playlist_IDs = result[["items"]][["id"]])
+  #y https://youtube.googleapis.com/youtube/v3/channelSections?part=snippet%2CcontentDetails&channelId=UCkfDws3roWo1GaA3pZUzfIQ&key=XXXX
+  #n https://www.googleapis.com/youtube/v3/channelSections?part=snippet%2CcontentDetails&channelid=UCkfDws3roWo1GaA3pZUzfIQ&key=XXXX
   
-  # function to get all playlists and their names from a specific channel
+  # function to get the last 50 playlists and their names from a specific channel
   getChannelPlaylists <- function(arg_sChannelID, arg_sAPIKey){
     # create url to access YouTube V3 API to retrieve the information about the playlists
-    arg_sChannelID <- "UCmY6t25uVbXIDTizjfLBI4Q" # Debugging Bigpuffer
-    arg_sAPIKey <- sAPIkey # Debugging
-    sURL <- paste0('https://youtube.googleapis.com/youtube/v3/channelSections?part=contentDetails&channelId=',arg_sChannelID,'&key=',arg_sAPIKey)
+    # arg_sChannelID <- "UCmY6t25uVbXIDTizjfLBI4Q" # Debugging Bigpuffer
+    # arg_sAPIKey <- sAPIkey # Debugging
+    sURL <- paste0('https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=',channelID,'&key=',sAPIkey,'&maxResults=50')
     # access the JSON results which can be found opening the URL via JSONlite and temporarily save them in a list
     lResult <- fromJSON(sURL)
-    # access the specific part about the playlistIDs on the channel and loop through them and pair them with their name
-    # for(sPlaylistID in lResult) #todo
-    
+    return(data.frame(playlist_names = lResult[["items"]][["snippet"]][["title"]], playlist_IDs = lResult[["items"]][["id"]]))
   }
-  paste0('https://www.googleapis.com/youtube/v3/search?key=',sAPIkey,'&channelId=',arg_sChannelID,'&part=snippet,id&order=date&maxResults=30')
+  # Test
+  test_ChannelPlaylists <- getChannelPlaylists(sChannelID, sAPIKey)
+  
+  
+  
+  
+  
   
   # unbekannt
   getall_channels<-function(ids,API_key,topn=5){
