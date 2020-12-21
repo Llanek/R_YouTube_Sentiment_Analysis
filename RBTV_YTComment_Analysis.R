@@ -6,26 +6,26 @@
   # Call the needed libraries
   require(vosonSML)   # necessary to get the Authenticate, Collect, ... functions
   require(jsonlite)   # necessary to get the fromJSON function
+  require(config)     # necessary to read out the config .yml-file
   #library(magrittr)  
   #require(curl)
 
   
   # Get and Read Google Developer Key / YouTube V3 API Key and Authentification
-  sAPIpath    <- "C:/Users/Yannic/OneDrive/Documents/11_Fortbildung/RBTV_YTComment_Analysis/API_KEY_YouTubeV3.txt"
-  arrAPItable <- read.table(sAPIpath, header = FALSE)
-  sAPIKey     <- arrAPItable[1,1]
+  sAPIKey     <- config::get("API_Key")
   #print(APIkey)  # Debugging
   arrKey      <- Authenticate("youtube",sAPIKey)
   
   
+  
   # #Collect Data using YouTube videos
-  # ytVideos <- c()
-  # ytVideoIds <- GetYoutubeVideoIDs(ytVideos)
-  # ytData <- Collect(
-  #             keyvideoIDs = ytVideoIds
-  #             ,maxComments = 100
-  #             ,verbose = FALSE
-  #           )
+  ytVideos <- c()
+  ytVideoIds <- GetYoutubeVideoIDs(ytVideos)
+  ytData <- Collect(
+              keyvideoIDs = bug_VideoID
+              ,maxComments = 100
+              ,verbose = FALSE
+            )
   # 
   # # Save the comment data as csv
   # filenamecsv <- "snippet2"
