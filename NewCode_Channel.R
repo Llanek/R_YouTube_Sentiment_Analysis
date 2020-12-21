@@ -16,7 +16,7 @@ library(reshape2)
   arrKey      <- Authenticate("youtube",sAPIkey)
   
   #IDs
-  sVideoID     <- "3gJngOCyrZg" # Debugging
+  sVideoID     <- "E7sP6t1QyrI" # Debugging
   sPlaylistID  <- "PLsD6gQXey8N1pHbp1MVTmnmCx5vConHKl" # Debugging
   sChannelID   <- "UCkfDws3roWo1GaA3pZUzfIQ" # Debugging RBTV LP&S
   
@@ -108,4 +108,120 @@ library(reshape2)
     return(stats)
   }
   all_channel <- getall_channels(channelID, sAPIkey)
+  
+  
+  
+  library(httr)
+  
+  base_url <- "https://www.googleapis.com/youtube/v3/commentThreads/"
+  api_opts <- list(
+    part = "snippet",
+    maxResults = 100, 
+    textFormat = "plainText",
+    videoId = sVideoID,  
+    key = sAPIKey,
+    fields = "items,nextPageToken", #nextPageToken only comes into play if one doesn't use the maximum of maxResults 
+    orderBy = "published")
+  
+  init_results <- httr::content(httr::GET(base_url, query = api_opts))
+  ##
+  names(init_results)
+  #[1] "nextPageToken" "items"
+  init_results$nextPageToken
+  #[1] "Cg0Q-YjT3bmSxQIgACgBEhQIABDI3ZWQkbzEAhjVneqH75u4AhgCIGQ="       
+  class(init_results)
+  #[1] "list"
+  
+  
+  api_opts$pageToken <- gsub("\\=","",init_results$nextPageToken)
+  next_results <- httr::content(
+    httr::GET(base_url, query = api_opts))
+  ##
+  R> next_results$nextPageToken
+  #[1] "ChYQ-YjT3bmSxQIYyN2VkJG8xAIgACgCEhQIABDI3ZWQkbzEAhiSsMv-ivu0AhgCIMgB"
+  
+  # unbekannt
+  yt_scraper <- setRefClass(
+    "yt_scraper",
+    fields = list(
+      base_url = "character",
+      api_opts = "list",
+      nextPageToken = "character",
+      data = "list",
+      unique_count = "numeric",
+      done = "logical",
+      core_df = "data.frame"),
+    
+    methods = list(
+      scrape = function() {
+        opts <- api_opts
+        if (nextPageToken != "") {
+          opts$pageToken <- nextPageToken
+        }
+        
+        res <- httr::content(
+          httr::GET(base_url, query = opts))
+        
+        nextPageToken <<- gsub("\\=","",res$nextPageToken)
+        data <<- c(data, res$items)
+        unique_count <<- length(unique(data))
+      },
+      
+      scrape_all = function() {
+        while (TRUE) {
+          old_count <- unique_count
+          scrape()
+          if (unique_count == old_count) {
+            done <<- TRUE
+            nextPageToken <<- ""
+            data <<- unique(data)
+            break
+          }
+        }
+      },
+      
+      initialize = function() {
+        base_url <<- "https://www.googleapis.com/youtube/v3/commentThreads/"
+        api_opts <<- list(
+          part = "snippet",
+          maxResults = 100,
+          textFormat = "plainText",
+          videoId = sVideoID,  
+          key = "my_google_developer_api_key",
+          fields = "items,nextPageToken",
+          orderBy = "published")
+        nextPageToken <<- ""
+        data <<- list()
+        unique_count <<- 0
+        done <<- FALSE
+        core_df <<- data.frame()
+      },
+      
+      reset = function() {
+        data <<- list()
+        nextPageToken <<- ""
+        unique_count <<- 0
+        done <<- FALSE
+        core_df <<- data.frame()
+      },
+      
+      cache_core_data = function() {
+        if (nrow(core_df) < unique_count) {
+          sub_data <- lapply(data, function(x) {
+            data.frame(
+              Comment = x$snippet$topLevelComment$snippet$textDisplay,
+              User = x$snippet$topLevelComment$snippet$authorDisplayName,
+              ReplyCount = x$snippet$totalReplyCount,
+              LikeCount = x$snippet$topLevelComment$snippet$likeCount,
+              PublishTime = x$snippet$topLevelComment$snippet$publishedAt,
+              CommentId = x$snippet$topLevelComment$id,
+              stringsAsFactors=FALSE)
+          })
+          core_df <<- do.call("rbind", sub_data)
+        } else {
+          message("\n`core_df` is already up to date.\n")
+        } 
+      }
+    )
+  )
   
