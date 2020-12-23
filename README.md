@@ -3,7 +3,7 @@
 > print("Hello, stranger!")
 [1] "Hello, stranger!"
 ```
-  And welcome to my first github repository! In this little readme I want to explain the idea, the aim(s) and maybe one day the results behind all the code you'll stumble across here. As a little disclaimer this project is only supervised and work on by myself and so far not peer reviewed in any kind as well as served as a prototype to get to know github. Therefore excuse all major and minor faux pas in the git/coding etiquette.
+  And welcome to my first github repository! In this little readme I want to explain the idea, the aim(s) and maybe one day the results behind all the code you'll stumble across here. As a little disclaimer this project is only supervised and work on by myself and so far not peer reviewed in any kind as well as served as a prototype to get to know github. Therefore excuse all major and minor faux pas in the git/coding etiquette. Further I'm not versed in YouTube's own analytical dashboards and functionalities, so maybe all of what's concluded below might very likely be already implemented by the YouTube/ Google data teams for channel admins and YouTuber users out there. 
 
 
 ## The origin
