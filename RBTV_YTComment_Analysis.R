@@ -19,13 +19,13 @@
   
   
   # #Collect Data using YouTube videos
-  ytVideos <- c()
-  ytVideoIds <- GetYoutubeVideoIDs(ytVideos)
-  ytData <- Collect(
-              keyvideoIDs = bug_VideoID
-              ,maxComments = 100
-              ,verbose = FALSE
-            )
+  # ytVideos <- c()
+  # ytVideoIds <- GetYoutubeVideoIDs(ytVideos)
+  # ytData <- Collect(
+  #             keyvideoIDs = ytVideoIds
+  #             ,maxComments = 100
+  #             ,verbose = FALSE
+  #           )
   # 
   # # Save the comment data as csv
   # filenamecsv <- "snippet2"
