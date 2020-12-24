@@ -2,6 +2,7 @@
 config.yml
 *.txt
 # ignore the unneccesary R session data
+.Rproj
 .Rproj.user
 .Rhistory
 .Rdata
