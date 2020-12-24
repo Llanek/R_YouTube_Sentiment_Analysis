@@ -3,7 +3,7 @@ config.yml
 *.txt
 *.md
 # ignore the unneccesary R session data
-.Rproj
+*.Rproj
 .Rproj.user
 .Rhistory
 .Rdata
