@@ -1,6 +1,7 @@
-# ignore the config or txt files
+# ignore the config, .txt or readme files
 config.yml
 *.txt
+*.md
 # ignore the unneccesary R session data
 .Rproj
 .Rproj.user
