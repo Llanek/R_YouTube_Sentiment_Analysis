@@ -27,3 +27,4 @@ to be continued...
 
 [comment]: <> (## Status quo)
 [comment]: <> (## Restrictions - such as comment replies not working)
+[comment]: <> (## Config structure)
